@@ -1,3 +1,6 @@
+#if !defined (SORTEDLISTDOUBLYLINKED_H)
+#define SORTEDLISTDOUBLYLINKED_H
+
 #include "ListDoublyLinkedIterator.h"
 #include "Text.h"
 using CSC2110::String;
@@ -14,9 +17,6 @@ class SortedListDoublyLinked
       DoubleNode<T>* findLocationRemove(String* sk);
       DoubleNode<T>* locateNodeRemove(String* sk);
       DoubleNode<T>* locateNodeAdd(T* item);
-
-      DoubleNode<T>* addDN(T* item);
-      T* remove(DoubleNode<T>* curr);
 
       DoubleNode<T>* findHead();
       DoubleNode<T>* findTail();
@@ -35,6 +35,9 @@ class SortedListDoublyLinked
       T* get(String* sk);
       void add(T* item);
       void remove(String* sk);
+
+      DoubleNode<T>* addDN(T* item);
+      T* remove(DoubleNode<T>* curr);
 
       ListDoublyLinkedIterator<T>* iterator();
 
@@ -68,50 +71,37 @@ void SortedListDoublyLinked<T>::remove(String* sk)
 template < class T >
 T* SortedListDoublyLinked<T>::remove(DoubleNode<T>* curr)
 {
-
    //DO THIS (prev == NULL / after == NULL are special cases)
    //remember to set loc
 
-   T* item;
-
-   DoubleNode<T>* prev;
-   DoubleNode<T>* after;
-
-   prev = curr->getPrev();
-   after = curr->getNext();
-
-   if(curr == NULL)
-   {
+   if (curr == NULL) {
       return NULL;
    }
 
-   item = curr->getItem();
+   T* item = curr->getItem();
 
-   else if (after == NULL && prev == NULL)
-   {
-      loc = NULL;
-      sze--;
-      delete curr;
-      return item;
-   }
+   DoubleNode<T>* prev = curr->getPrev();
+   DoubleNode<T>* after = curr->getNext();
 
-   else if (prev == NULL)
-   {
+   if (prev != NULL && after != NULL) {
+
+      prev->setNext(after);
+      after->setPrev(prev);
+
+   } else if (prev == NULL && after != NULL) {
+
       after->setPrev(prev);
       loc = after;
-   }
 
-   else if (after == NULL)
-   {
+   } else if (after == NULL && prev != NULL) {
+
       prev->setNext(after);
       loc = prev;
-   }
 
-   else
-   {
-      prev->setNext(after);
-      after->setNext(prev);
-      loc = prev;
+   } else {
+
+      loc = NULL;
+
    }
 
    sze--;
